@@ -207,4 +207,18 @@ describe "Dynamoid::Associations::Chain" do
       Dynamoid::Config.partitioning = previous_value
     end
   end
+  
+  context 'subset conditions' do
+    before do
+      @users = (1..4).map{|count| User.create(:name => "User#{count}", :email => 'user#{count}@example.com', :password => 'Test#{count}')}
+      @chain = Dynamoid::Criteria::Chain.new(User)
+    end
+    
+    it 'returns results selected by array of ids' do
+      @chain.query = {email: ['user1@example.com', 'user2@example.com']}
+      puts @chain.send(:records_with_index).should include(@users[0], @users[1])
+    end
+  end
+  
+
 end

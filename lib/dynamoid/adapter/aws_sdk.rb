@@ -167,6 +167,7 @@ module Dynamoid
           result.symbolize_keys!
         end
       end
+            
 
       def update_item(table_name, key, options = {}, &block)
         range_key = options.delete(:range_key)
@@ -231,10 +232,16 @@ module Dynamoid
               end
             end
           else
-            yielder.yield get_item(table_name, opts[:hash_value])
+            if opts[:hash_value].class == Array              
+              yielder.yield batch_get_item({table_name => opts[:hash_value]}, opts)
+            else
+              yielder.yield get_item(table_name, opts[:hash_value])
+            end
           end
         end
       end
+      
+        
 
       # Scan the DynamoDB table. This is usually a very slow operation as it naively filters all data on
       # the DynamoDB servers.

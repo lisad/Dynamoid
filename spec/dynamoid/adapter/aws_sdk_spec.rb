@@ -278,6 +278,13 @@ describe Dynamoid::Adapter::AwsSdk do
       Dynamoid::Adapter.query(test_table1, :hash_value => '1').first.should == { :id=> '1', :name=>"Josh" }
     end
     
+    it 'performs subset queries as batch requets' do
+      puts "LMD: In this test"
+      Dynamoid::Adapter.put_item(test_table1, {:id => '1', :name => 'Josh'})
+      Dynamoid::Adapter.put_item(test_table1, {:id => '2', :name => 'Justin'})
+      puts Dynamoid::Adapter.query(test_table1, :hash_value => ['1', '2']).first
+    end
+    
     it_behaves_like 'range queries'
 
     # Scan
